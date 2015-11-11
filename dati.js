@@ -53,8 +53,10 @@ function loadData(path){
 			for	(index = 0; index < person.length; index++) {
 				if (d.tweet_lower.search(person[index].nick) > -1){
 					ind_cont = index;
-					
+					if (ind_cont ==11){
 					//console.log("cont "+person[index].nick+" "+data[0].tweet_lower.search(person[index].nick))
+					console.log(d.tweet_lower);
+					}
 				} else {
 					/*
 					sim = similar_text(d.tweet_lower,person[index].nick);
