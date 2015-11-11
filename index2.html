@@ -14,32 +14,12 @@
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="grafici.js"></script>
 <script src="dati.js"></script>
-<div id="main">
-      <div id="sequence"></div>
-      <div id="chart">
-        <div id="explanation" style="visibility: hidden;">
-          <span id="percentage"></span><br/>
-          of tweets talk about it.
-        </div>
-      </div>
-    </div>
-    <div id="sidebar">
-      <input type="checkbox" id="togglelegend"> Legend<br/>
-      <div id="legend" style="visibility: hidden;"></div>
-    </div>
-    <script type="text/javascript" src="sequences.js"></script>
-    <script type="text/javascript">
-      // Hack to make this example display correctly in an iframe on bl.ocks.org
-      d3.select(self.frameElement).style("height", "300px");
-  </script> 
 
 <script>
 a = loadData("tweet.csv");
-/*
 d3.csv("tweet.csv", function(data) {
   console.log(data[0]);
 });
-*/
 var freqData=[
 {State:'AL',freq:{low:4786, mid:1319, high:249}}
 ,{State:'AZ',freq:{low:1101, mid:412, high:674}}
