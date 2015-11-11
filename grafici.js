@@ -52,6 +52,7 @@ function dashboard(id, fData){
             .attr("text-anchor", "middle");
         
         function mouseover(d){  // utility function to be called on mouseover.
+		/*
             // filter for selected state.
             var st = fData.filter(function(s){ return s.State == d[0];})[0],
                 nD = d3.keys(st.freq).map(function(s){ return {type:s, freq:st.freq[s]};});
@@ -59,12 +60,15 @@ function dashboard(id, fData){
             // call update functions of pie-chart and legend.    
             pC.update(nD);
             leg.update(nD);
+			*/
         }
         
         function mouseout(d){    // utility function to be called on mouseout.
+		/*
             // reset the pie-chart and legend.    
             pC.update(tF);
             leg.update(tF);
+			*/
         }
         
         // create function to update the bars. This will be used by pie-chart.

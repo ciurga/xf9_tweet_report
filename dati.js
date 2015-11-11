@@ -79,6 +79,8 @@ function loadData(path){
 		tweet = data;
 		tot_stat = createStat(count_person,person);
 		dashboard('#dashboard',tot_stat);
+		var json = buildStat(tot_stat,person);
+		createVisualization(json);
 		});
 	}
 
@@ -89,7 +91,7 @@ function loadData(path){
 			if (i==person[index].id_name){
 				instat = [];
 				instat.name = person[index].name;
-				instat.id_name = person[i].id_name;
+				instat.id_name = person[index].id_name;
 				instat.count = count_person[i];
 				stat[i] = instat;
 				i++;

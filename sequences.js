@@ -1,7 +1,7 @@
 // Dimensions of sunburst.
-var width = 450;
-var height = 400;
-var radius = Math.min(width, height) / 2;
+var width = 750;
+var height = 600;
+var radius = Math.min(width, height) / 4;
 
 // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
 var b = {
@@ -10,7 +10,7 @@ var b = {
 
 // Mapping of step names to colors.
 var colors = {
-  "program": "#5687d1",
+  "tv program": "#5687d1",
   "gruppi": "#7b615c",
   "under men": "#de783b",
   "under women": "#6ab975",
@@ -41,8 +41,8 @@ var arc = d3.svg.arc()
 // row, and can receive the csv as an array of arrays.
 d3.text("category.csv", function(text) {
   var csv = d3.csv.parseRows(text);
-  var json = buildHierarchy(csv);
-  createVisualization(json);
+  //var json = buildHierarchy(csv);
+  //createVisualization(json);
 });
 
 // Main function to draw and set up the visualization, once we have the data.
@@ -86,6 +86,7 @@ function createVisualization(json) {
 function mouseover(d) {
 
   var percentage = (100 * d.value / totalSize).toPrecision(3);
+  //var percentage = d.value;
   var percentageString = percentage + "%";
   if (percentage < 0.1) {
     percentageString = "< 0.1%";
@@ -188,7 +189,6 @@ function updateBreadcrumbs(nodeArray, percentageString) {
       .attr("points", breadcrumbPoints)
       .style("fill", function(d) { return colors[d.name]; });
 
-  // Text that describe the path
   entering.append("svg:text")
       .attr("x", (b.w + b.t) / 2)
       .attr("y", b.h / 2)
@@ -300,6 +300,51 @@ function buildHierarchy(csv) {
  	children.push(childNode);
       }
     }
+  }
+  return root;
+};
+
+function buildStat(stat, person) {
+  var root = {"name": "root", "children": []};
+  var i = 0;
+  for (var index = 0; index < person.length; index++) {
+	if (i==person[index].id_name){
+		var sequence = person[index].name;
+		var size = stat[person[index].id_name].count;
+		if (isNaN(size)) { // e.g. if this is a header row
+		  continue;
+		}
+		//var parts = sequence.split("-");
+		var parts = [person[index].category,person[index].name];
+		var currentNode = root;
+		for (var j = 0; j < parts.length; j++) {
+			  var children = currentNode["children"];
+			  var nodeName = parts[j];
+			  var childNode;
+			  if (j + 1 < parts.length) {
+					// Not yet at the end of the sequence; move down the tree.
+					var foundChild = false;
+					for (var k = 0; k < children.length; k++) {
+						  if (children[k]["name"] == nodeName) {
+							childNode = children[k];
+							foundChild = true;
+							break;
+						  }
+					}
+					// If we don't already have a child node for this branch, create it.
+					if (!foundChild) {
+						  childNode = {"name": nodeName, "children": []};
+						  children.push(childNode);
+					}
+					currentNode = childNode;
+			  } else {
+					// Reached the end of the sequence; create a leaf node.
+					childNode = {"name": nodeName, "size": size};
+					children.push(childNode);
+			  }
+		}
+		i++;
+	}
   }
   return root;
 };
