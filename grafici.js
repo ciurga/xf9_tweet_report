@@ -1,6 +1,6 @@
 function dashboard(id, fData){
-    var barColor = 'steelblue';
-    function segColor(c){ return {low:"#807dba", mid:"#e08214",high:"#41ab5d"}[c]; }
+    //var barColor = 'steelblue';
+    //function segColor(c){ return {low:"#807dba", mid:"#e08214",high:"#41ab5d"}[c]; }
     
     // compute total for each state.
     //fData.forEach(function(d){d.total=d.freq.low+d.freq.mid+d.freq.high;});
@@ -41,7 +41,9 @@ function dashboard(id, fData){
             .attr("y", function(d) { return y(d[1]); })
             .attr("width", x.rangeBand())
             .attr("height", function(d) { return hGDim.h - y(d[1]); })
-            .attr('fill',barColor)
+            .attr('fill',function(d) { 
+                return colored(d[3],d[2]); 
+            })
             .on("mouseover",mouseover)// mouseover is defined below.
             .on("mouseout",mouseout);// mouseout is defined below.
             
@@ -61,6 +63,12 @@ function dashboard(id, fData){
             pC.update(nD);
             leg.update(nD);
 			*/
+            bars.select("rect").transition().duration(500)
+                .attr("y", function(d) {return y(d[1]); })
+                .attr("height", function(d) { return hGDim.h - y(d[1]); })
+                .attr('fill',function(d) { 
+                return colored(d[3],d[2]); 
+                });
         }
         
         function mouseout(d){    // utility function to be called on mouseout.
@@ -92,7 +100,7 @@ function dashboard(id, fData){
         }        
         return hG;
     }
-    
+    /*
     // function to handle pieChart.
     function pieChart(pD){
         var pC ={},    pieDim ={w:250, h: 250};
@@ -112,7 +120,7 @@ function dashboard(id, fData){
         // Draw the pie slices.
         piesvg.selectAll("path").data(pie(pD)).enter().append("path").attr("d", arc)
             .each(function(d) { this._current = d; })
-            .style("fill", function(d) { return segColor(d.data.type); })
+            .style("fill", function(d) { return segColor(d.data.id_cat); })
             .on("mouseover",mouseover).on("mouseout",mouseout);
 
         // create function to update pie-chart. This will be used by histogram.
@@ -125,7 +133,7 @@ function dashboard(id, fData){
             // call the update function of histogram with new data.
             hG.update(fData.map(function(v){ 
                 return [v.State,v.freq[d.data.type]];}),segColor(d.data.type));
-        }
+        };
         //Utility function to be called on mouseout a pie slice.
         function mouseout(d){
             // call the update function of histogram with all data.
@@ -141,7 +149,8 @@ function dashboard(id, fData){
         }    
         return pC;
     }
-    
+    */
+   /*
     // function to handle legend.
     function legend(lD){
         var leg = {};
@@ -186,6 +195,7 @@ function dashboard(id, fData){
 
         return leg;
     }
+    */
     
     // calculate total frequency by segment for all state.
 	/*
@@ -195,7 +205,7 @@ function dashboard(id, fData){
 	 */
     
     // calculate total frequency by state for all segment.
-    var sF = fData.map(function(d){return [d.name,d.total];});
+    var sF = fData.map(function(d){return [d.name,d.total,d.id_cat,d.id_incat];});
 
     var hG = histoGram(sF) // create the histogram.
         //pC = pieChart(tF), // create the pie-chart.

@@ -39,22 +39,8 @@ function colored(c,m) {
         c = 0;
     }
     a,b,e,col = jsgradient.generateGradient(colors_range[m][0],colors_range[m][1], 15);
-    console.log("m "+ m + " c "+c );
-    console.log(colors_range[m][0]+" "+colors_range[m][1]);
-    //var co =[b.h,b.s,b.t];
-    /*co[m%3] = 255;
-    //co[Math.floor(m/3)-1] = 255;
-    //console.log("m" +m+ " e m/3 "+m/3);
-    //console.log(m%3);
-    for (var i=0; i<3;i++){
-        if (co[i] == 0){
-            co[i] = c*5;
-        }
-    }
-    console.log(co);
-    var i = i*10;
-    var j = j*5;
-    var k;*/
+//    console.log("m "+ m + " c "+c );
+//    console.log(colors_range[m][0]+" "+colors_range[m][1]);
     if (c==0){
         return col[c+6];
     } else {

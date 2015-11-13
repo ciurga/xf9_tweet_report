@@ -1,39 +1,22 @@
 function loadData(path){
 	var index,sim,max = -1, ind_max = 0, ind_cont = -1;
 	var tweet;
-	var person = [];
+	var person = [], cat = [];
 	var count_person = [];
 	var tot_stat;
-	/*
-	var person=[
-	{nick:'xfactoritalia',name:'X Factor',category:'null'}
-	,{nick:'mara',name:'Mara Maionchi',category:'null'}
-	,{nick:'elio',name:'Elio',category:'over'}
-	,{nick:'mika',name:'Mika',category:'under men'}
-	,{nick:'fedez',name:'Fedez',category:'gruppi'}
-	,{nick:'skin',name:'Skin',category:'under women'}
-	,{nick:'luca',name:'Luca',category:'under men'}
-	,{nick:'leonardo',name:'Leonardo',category:'under men'}
-	,{nick:'leo',name:'Leonardo',category:'under men'}
-	,{nick:'leon',name:'Leonardo',category:'under men'}
-	,{nick:'eleonora',name:'Eleonora',category:'under women'}
-	,{nick:'margherita',name:'Margherita',category:'under women'}
-	,{nick:'marghe',name:'Margherita',category:'under women'}
-	,{nick:'urban strangers',name:'Urban Strangers',category:'gruppi'}
-	,{nick:'urban',name:'Urban Strangers',category:'gruppi'}
-	,{nick:'ustrangers',name:'Urban Strangers',category:'gruppi'}
-	,{nick:'mooseek',name:'Mooseek',category:'gruppi'}
-	,{nick:'landlord',name:'Landlord',category:'gruppi'}
-	,{nick:'gio sada',name:'Gio Sada',category:'over'}
-	,{nick:'gio',name:'Gio Sada',category:'over'}
-	,{nick:'davide',name:'Davide',category:'over'}
-	]
-	*/
+        var c = 1;
 	
 	d3.csv("persone.csv", function(data) {
 		data.forEach(function(d) {
 			d.id_name = +d.id_name;
+                        if (cat[cat.length-1]!==d.category){
+                            cat.push(d.category);  
+                            c = 1;
+                        }
+                        d.id_incat = c;
+                        d.id_cat = cat.length-1;
 			count_person[d.id_name] = 0;
+                        c++;
 		});
 		person = data;
 		loadTweet()
@@ -94,6 +77,8 @@ function loadData(path){
 				instat = [];
 				instat.name = person[index].name;
 				instat.id_name = person[index].id_name;
+                                instat.id_cat = person[index].id_cat;
+                                instat.id_incat = person[index].id_incat;
 				instat.count = count_person[i];
 				stat[i] = instat;
 				i++;
