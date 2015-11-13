@@ -55,7 +55,7 @@ function loadData(path){
 					ind_cont = index;
 					if (ind_cont ==11){
 					//console.log("cont "+person[index].nick+" "+data[0].tweet_lower.search(person[index].nick))
-					console.log(d.tweet_lower);
+					//console.log(d.tweet_lower);
 					}
 				} else {
 					/*

@@ -1,3 +1,5 @@
+/* global d3, jsgradient */
+
 // Dimensions of sunburst.
 var width = 750;
 var height = 600;
@@ -9,7 +11,7 @@ var b = {
 };
 
 // Mapping of step names to colors.
-var colors = {
+var colors_arr = {
   "tv program": "#5687d1",
   "gruppi": "#7b615c",
   "under men": "#de783b",
@@ -17,6 +19,49 @@ var colors = {
   "over": "#a173d1"
 };
 
+/* var colors = ['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 
+'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red', 
+'silver', 'teal', 'white', 'yellow'];*/
+
+var colors_range = [
+    ["#FFFFFF","#DC143C"],
+    ["#FFFFFF","#FF4500"],
+    ["#FFFFFF","#00008B"],
+    ["#FFFFFF","#228B22"],
+    ["#FFFFFF","#6600CC"],
+    ["#FFFFFF","#000000"]
+    ];
+    
+function colored(c,m) {
+    var a,b,e,col;
+    if (typeof m == 'undefined'){
+        m = 0;
+        c = 0;
+    }
+    a,b,e,col = jsgradient.generateGradient(colors_range[m][0],colors_range[m][1], 15);
+    console.log("m "+ m + " c "+c );
+    console.log(colors_range[m][0]+" "+colors_range[m][1]);
+    //var co =[b.h,b.s,b.t];
+    /*co[m%3] = 255;
+    //co[Math.floor(m/3)-1] = 255;
+    //console.log("m" +m+ " e m/3 "+m/3);
+    //console.log(m%3);
+    for (var i=0; i<3;i++){
+        if (co[i] == 0){
+            co[i] = c*5;
+        }
+    }
+    console.log(co);
+    var i = i*10;
+    var j = j*5;
+    var k;*/
+    if (c==0){
+        return col[c+6];
+    } else {
+        return col[15-c*2];
+    }
+}
+    
 // Total size of all segments; we set this later, after loading the data.
 var totalSize = 0; 
 
@@ -71,7 +116,9 @@ function createVisualization(json) {
       .attr("display", function(d) { return d.depth ? null : "none"; })
       .attr("d", arc)
       .attr("fill-rule", "evenodd")
-      .style("fill", function(d) { return colors[d.name]; })
+      .style("fill", function(d) { 
+          return colored(d.idc, d.idm); 
+          })
       .style("opacity", 1)
       .on("mouseover", mouseover);
 
@@ -187,7 +234,7 @@ function updateBreadcrumbs(nodeArray, percentageString) {
 
   entering.append("svg:polygon")
       .attr("points", breadcrumbPoints)
-      .style("fill", function(d) { return colors[d.name]; });
+      .style("fill", function(d) { return colored(d.idc, d.idm); });
 
   entering.append("svg:text")
       .attr("x", (b.w + b.t) / 2)
@@ -227,10 +274,10 @@ function drawLegend() {
 
   var legend = d3.select("#legend").append("svg:svg")
       .attr("width", li.w)
-      .attr("height", d3.keys(colors).length * (li.h + li.s));
+      .attr("height", d3.keys(colors_arr).length * (li.h + li.s));
 
   var g = legend.selectAll("g")
-      .data(d3.entries(colors))
+      .data(d3.entries(colors_arr))
       .enter().append("svg:g")
       .attr("transform", function(d, i) {
               return "translate(0," + i * (li.h + li.s) + ")";
@@ -253,7 +300,7 @@ function drawLegend() {
 
 function toggleLegend() {
   var legend = d3.select("#legend");
-  if (legend.style("visibility") == "hidden") {
+  if (legend.style("visibility") === "hidden") {
     legend.style("visibility", "");
   } else {
     legend.style("visibility", "hidden");
@@ -282,7 +329,7 @@ function buildHierarchy(csv) {
    // Not yet at the end of the sequence; move down the tree.
  	var foundChild = false;
  	for (var k = 0; k < children.length; k++) {
- 	  if (children[k]["name"] == nodeName) {
+ 	  if (children[k]["name"] === nodeName) {
  	    childNode = children[k];
  	    foundChild = true;
  	    break;
@@ -307,8 +354,12 @@ function buildHierarchy(csv) {
 function buildStat(stat, person) {
   var root = {"name": "root", "children": []};
   var i = 0;
+  var m = 0;
+  var n = 1;
   for (var index = 0; index < person.length; index++) {
-	if (i==person[index].id_name){
+        
+	if (i === person[index].id_name){
+                
 		var sequence = person[index].name;
 		var size = stat[person[index].id_name].count;
 		if (isNaN(size)) { // e.g. if this is a header row
@@ -320,12 +371,12 @@ function buildStat(stat, person) {
 		for (var j = 0; j < parts.length; j++) {
 			  var children = currentNode["children"];
 			  var nodeName = parts[j];
-			  var childNode;
+			  var childNode;                    
 			  if (j + 1 < parts.length) {
 					// Not yet at the end of the sequence; move down the tree.
 					var foundChild = false;
 					for (var k = 0; k < children.length; k++) {
-						  if (children[k]["name"] == nodeName) {
+						  if (children[k]["name"] === nodeName) {
 							childNode = children[k];
 							foundChild = true;
 							break;
@@ -333,14 +384,17 @@ function buildStat(stat, person) {
 					}
 					// If we don't already have a child node for this branch, create it.
 					if (!foundChild) {
-						  childNode = {"name": nodeName, "children": []};
+						  childNode = {"name": nodeName, "children": [], "idc": 0, "idm": m};
+                                                  m++;
+                                                  n = 1;
 						  children.push(childNode);
 					}
 					currentNode = childNode;
 			  } else {
 					// Reached the end of the sequence; create a leaf node.
-					childNode = {"name": nodeName, "size": size};
+					childNode = {"name": nodeName, "size": size, "idc": n, "idm": m-1 };
 					children.push(childNode);
+                                        n++;
 			  }
 		}
 		i++;
